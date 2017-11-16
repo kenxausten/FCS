@@ -1,7 +1,10 @@
 #! /usr/bin/env python 
 # -*- coding: utf-8 -*-
+'''
+Created on 2017/11/16
 
-#Example https://github.com/0x024/MS
+@author: Fucheng Xu
+'''
 
 import urllib
 import json
