@@ -8,7 +8,7 @@ import json
 import os
 import requests
 
-class FacePlusServer(object):
+class FaceService(object):
 	def __init__(self, api_key, api_secret):
 		self.api_key = api_key
 		self.api_secret = api_secret
@@ -99,20 +99,46 @@ class FacePlusServer(object):
 		return self.http_post(http_url, params, None)
 	
 if __name__ == '__main__':
-	file_path = './ID1.jpg'
-	faceSet_name = 'yy'
-	face_plus_service = FacePlusServer(api_key='wCadfoQIEbZ1RvksVWvlTkd21a5bZWAH', api_secret='wff5ht9ky77pWK52a_NtwY3Csz47CSqT')
-	face_token_id = face_plus_service.get_img_token(file_path)
-	if face_token_id:
-		result = face_plus_service.set_create(faceSet_name)
-		print result
-		result = face_plus_service.set_add(faceSet_name, face_token_id)
-		print result
-		
-		result = face_plus_service.search(faceSet_name, file_path)
-		print result
-	else:
-		print "get image token failed"
-# 	result = face_plus_service.set_delete(faceSet_name, 0)
+	import cv2
 	
-# 	print result
+	face_service = FaceService(api_key='wCadfoQIEbZ1RvksVWvlTkd21a5bZWAH', api_secret='wff5ht9ky77pWK52a_NtwY3Csz47CSqT')
+	faceSet_name = 'yy'
+	
+	image_count = 3
+	for image_index in range(1, image_count+1):
+		file_path = '../image/%d.jpg' % image_index
+		ret_file_path = '../image/face_%d.jpg' % image_index
+		
+		result = face_service.detect(file_path)
+		print "image:%s, face count: %d" % (file_path, len(result["faces"]))
+		
+		img = cv2.imread(file_path)
+		
+		for i in range(0, len(result["faces"])):
+			humanbody_rectangle = result["faces"][i]["face_rectangle"]
+			x = humanbody_rectangle["left"]
+			y = humanbody_rectangle["top"]
+			w = humanbody_rectangle["width"]
+			h = humanbody_rectangle["height"]
+			z = str(i)
+			print str(result["faces"][i])
+			print
+			img = cv2.rectangle(img, (x, y), (x+w, y+h), (0, 225, 225), 2)
+			cv2.putText(img, z, (x, y - 20), cv2.FONT_HERSHEY_SIMPLEX, 1, 100)
+			
+		cv2.imwrite(ret_file_path, img)
+	
+# 	face_token_id = face_service.get_img_token(file_path)
+# 	if face_token_id:
+# 		result = face_service.set_create(faceSet_name)
+# 		print result
+# 		result = face_service.set_add(faceSet_name, face_token_id)
+# 		print result
+# 		
+# 		result = face_service.search(faceSet_name, file_path)
+# 		print result
+# 	else:
+# 		print "get image token failed"
+# # 	result = face_service.set_delete(faceSet_name, 0)
+# 	
+# # 	print result
