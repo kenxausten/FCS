@@ -8,39 +8,67 @@ Created on 2017年11月18日
 from cmd import Cmd
 from task import FaceTask
 
+
+def parse(line):
+    return tuple(line.split(' '))
+
 exec_task = FaceTask()
+
 
 class FaceShell(Cmd):
     intro = 'Welcome to the face shell.   Type help or ? to list commands.\n'
     prompt = '(face) '
 
-    def do_show(self, arg):
-        """ show facesets, show faces """
-        arg = arg.split(' ')
-        print(len(arg))
+    def do_show(self, original_arg):
+        """ show facesets, show faces outer_id """
+        usage = False
+        arg = parse(original_arg)
         if len(arg) == 1:
             if arg[0] == 'facesets':
                 print(exec_task.get_facesets())
+            else:
+                usage = True
         elif len(arg) == 2:
             if arg[0] == 'faces':
                 print(exec_task.get_faces(arg[1]))
+            else:
+                usage = True
+
+        if usage:
+            self.default(original_arg+ '\n' + "show facesets, show faces facesets_name")
+
+    def do_check(self, original_arg):
+        u'check identity'
+        arg = parse(original_arg)
+
+        if len(arg) == 1 and arg[0] == 'identity':
+            print(exec_task.search_people_from_camera())
         else:
-            self.default(arg[0]+'\n'+ "show facesets, show faces name")
+            self.default(original_arg + '\n' + "check identity")
 
-    def do_serach(self, arg):
-        u'compare'
-        self.default(arg[0])
+    def do_update(self, original_arg):
+        arg = parse(original_arg)
+        if len(arg) == 1 and arg[0] == 'identity':
+            if not exec_task.update_faces_from_camera():
+                print('Just work in RASPBERRYPI.')
+            else:
+                print('update success.')
+        else:
+            self.default(original_arg+ '\n' + "update identity ")
 
-    def close(self):
-        pass
+    def do_exit(self, arg):
+        """exit face."""
+        return self.clear()
 
-    def do_bye(self):
+    def do_bye(self, arg):
+        """exit face."""
+        return self.clear()
+
+    def clear(self):
         print('exit face.')
+        exec_task.clear()
         return True
 
-def parse(arg):
-    'Convert a series of zero or more numbers to an argument tuple'
-    return tuple(map(int, arg.split()))
 
 if __name__ == '__main__':
     FaceShell().cmdloop()
