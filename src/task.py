@@ -118,9 +118,9 @@ class FaceTask(object):
         if not RASPBERRYPI:
             return None
         image_name = '%s.jpg'%time.time()
-        GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, True)
+        GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, 1)
         cmd = 'sudo raspistill -t 2000 -o %s -p 100,100,300,200 -q 5' % image_name
-        GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, False)
+        GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, 0)
         with self.camera_lock:
             os.system(cmd)
         ret = self.api.detect(image_file=File(image_name))

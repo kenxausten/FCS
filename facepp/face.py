@@ -11,7 +11,6 @@ import urllib
 import json
 import os
 import requests
-import cv2
 
 class FaceService(object):
 	def __init__(self, api_key, api_secret):
@@ -138,7 +137,11 @@ def create_raw_faceset(face_service, faceset_name, image_path, image_count):
 
 def draw_face_location():
 	face_service = FaceService(api_key='wCadfoQIEbZ1RvksVWvlTkd21a5bZWAH', api_secret='wff5ht9ky77pWK52a_NtwY3Csz47CSqT')
-	
+	try:
+		import cv2
+	except ImportError:
+		print('please install opencv.')
+		return
 	image_count = 3
 	for image_index in range(1, image_count+1):
 		file_path = '../image/%d.jpg' % image_index

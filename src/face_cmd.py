@@ -38,7 +38,7 @@ class FaceShell(Cmd):
             self.default(original_arg+ '\n' + "show facesets, show faces facesets_name")
 
     def do_check(self, original_arg):
-        u'check identity'
+        """check identity""" 
         arg = parse(original_arg)
 
         if len(arg) == 1 and arg[0] == 'identity':

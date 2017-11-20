@@ -12,6 +12,13 @@ A. On Windows platform.
     pip install -r requirements.txt
 ```
 
+### feather
+* 树莓派平台
+* 命令行交互
+* GPIO触发身份比较
+* 拍照指示。
+* PC平台, 只支持cmd部分命令。
+
 ### facecmd
 ``` python
     pi@raspberrypi:~/kx/FCS/src$ python run.py 
@@ -39,7 +46,10 @@ A. On Windows platform.
 ```
 
 ### GPIO Control
-* 树莓派BCM PIN 17 低电平触发，摄像头拍照check对比身份。
+* 默认不开启GPIO触发方式，使用 python run.py start gpio 开启GPIO。
+* 树莓派BCM PIN 17 高电平电平触发，摄像头拍照check对比身份。
+* 拍照过程中BCM PIN 4 会输出高电平可作为，拍照指示。
 
-### next
+### Next
+* 丰富命令行指令。
 ...
