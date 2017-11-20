@@ -47,7 +47,8 @@ def GPIO_spin(signal):
         exec_task = FaceTask()
         while True:
             status = GPIO.input(BCM_PIN17_TRIGGER_SHOW_TAKE_PHOTO)
-            if not status:  # 低电平按键别按下
+            if False == status:  # 低电平按键别按下
+                print('status', status)
                 time.sleep(0.02)  # 延时20ms, 按键消抖动
                 if not GPIO.input(BCM_PIN17_TRIGGER_SHOW_TAKE_PHOTO):  #确认按键按下
                     exec_task.search_people_from_camera() # 触发拍照check identity

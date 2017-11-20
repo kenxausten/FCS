@@ -46,7 +46,8 @@ class FaceShell(Cmd):
         else:
             self.default(original_arg + '\n' + "check identity")
 
-    def do_update(self, original_arg):
+    def do_upload(self, original_arg):
+        """ upload identity """
         arg = parse(original_arg)
         if len(arg) == 1 and arg[0] == 'identity':
             if not exec_task.update_faces_from_camera():
@@ -54,7 +55,24 @@ class FaceShell(Cmd):
             else:
                 print('update success.')
         else:
-            self.default(original_arg+ '\n' + "update identity ")
+            self.default(original_arg+ '\n' + "upload identity ")
+
+    def do_del(self, original_arg):
+        """ delete faceset xx """
+        arg = parse(original_arg)
+        if len(arg) == 2 and arg[0] == 'faceset':
+            print('faceset', arg[1])
+            exec_task.delete_faceset(arg[1])
+        else:
+            self.default(original_arg+ '\n' + "del faceset xx")
+
+    def do_add(self, original_arg):
+        """ add faceset xx """
+        arg = parse(original_arg)
+        if len(arg) == 2 and arg[0] == 'faceset':
+            exec_task.add_faceset((arg[1]))
+        else:
+            self.default(original_arg+ '\n' + "add faceset xx")
 
     def do_exit(self, arg):
         """exit face."""

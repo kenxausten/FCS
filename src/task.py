@@ -44,7 +44,7 @@ class FaceTask(object):
         if RASPBERRYPI:
             GPIO.setmode(GPIO.BCM)
             GPIO.setup(BCM_PIN4_SHOW_TAKE_PHOTO, GPIO.OUT)
-            GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, 1)
+            GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, True)
         try:
             self.api.faceset.create(outer_id = 'default')
         except APIError as e:
@@ -53,7 +53,16 @@ class FaceTask(object):
         self.camera_lock = threading.Lock()
 
     def delete_faceset(self, outer_id):
-        return self.api.faceset.delete(outer_id=outer_id, check_empty=0)
+        try:
+            return self.api.faceset.delete(outer_id=outer_id, check_empty=0)
+        except APIError as e:
+            return str(e)
+
+    def add_faceset(self, outer_id):
+        try:
+            return self.api.faceset.create(outer_id=outer_id)
+        except APIError as e:
+            return str(e)
 
     def get_facesets(self):
         """获取所有的faceset"""
@@ -86,13 +95,13 @@ class FaceTask(object):
         """
         name = kwargs.pop('name', None)
         if name == None:
-            name = input('Please enter the picture name:')
+            name = raw_input('Please enter the picture name:')
         try:
             face_token = self.api.detect(**kwargs)["faces"][0]["face_token"]
-        except KeyError: 
+        except (KeyError, IndexError): 
             return None
         self.api.faceset.addface(outer_id=outer_id, face_tokens=face_token)
-        self.api.face.setuserid(face_token='1f394f938b722e97d406a517faa5ae95', user_id=name)
+        self.api.face.setuserid(face_token=face_token, user_id=name)
         return face_token, name
 
     def search_faces(self,  face_token, outer_id='default'):
@@ -100,7 +109,7 @@ class FaceTask(object):
         """
         try:
             results = self.api.search(face_token=face_token, outer_id=outer_id)['results']
-        except ValueError:
+        except (KeyError):
             return None
 
         return [face['user_id'] for face in results if face['confidence'] > CONFIDENCE]
@@ -109,25 +118,30 @@ class FaceTask(object):
         if not RASPBERRYPI:
             return None
         image_name = '%s.jpg'%time.time()
-        GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, 1)
-        cmd = 'sudo raspistill -t 2000 -o %s' % image_name
-        GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, 0)
+        GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, True)
+        cmd = 'sudo raspistill -t 2000 -o %s -p 100,100,300,200 -q 5' % image_name
+        GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, False)
         with self.camera_lock:
             os.system(cmd)
-        ret = self.detect(image_file=File(image_name))
-        face_token=ret["faces"][0]["face_token"]
+        ret = self.api.detect(image_file=File(image_name))
+        try:
+            face_token=ret["faces"][0]["face_token"]
+        except (IndexError, KeyError):
+            if isinstance(ret, dict) and ('error_message' in ret.keys()):
+                return ret['error_message']
+            return 'The picture is invalid.'
 
-        return self.search_faces(outer_id, face_token)
+        return self.search_faces(face_token, outer_id=outer_id)
 
     def update_faces_from_camera(self, outer_id='default'):
         if not RASPBERRYPI:
             return None
         image_name = '%s.jpg'%time.time()
-        cmd = 'sudo raspistill -t 2000 -o %s' % image_name
-        GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, 1)
+        cmd = 'sudo raspistill -t 2000 -o %s -p 100,100,300,200 -q 5' % image_name
+        GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, True)
         with self.camera_lock:
             os.system(cmd)
-        GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, 0)
+        GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, False)
         return self.upload_faces(outer_id, image_file=File(image_name))
 
     def clear(self):
@@ -140,6 +154,3 @@ if __name__ == '__main__':
     print(sets)
     if len(sets):
         print(face_task.get_faces(outer_id=sets[1]))
-
-
-
