@@ -12,7 +12,7 @@ A. On Windows platform.
     pip install -r requirements.txt
 ```
 
-### feather
+### feature
 * 树莓派平台
 * 命令行交互
 * GPIO触发身份比较
