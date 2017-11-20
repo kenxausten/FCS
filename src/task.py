@@ -64,11 +64,8 @@ class FaceTask(object):
 
         return [faceset['outer_id'] for faceset in facesets]
 
-    def get_faces(self, outer_id=None):
+    def get_faces(self, outer_id='default'):
         """获取指定faceset中的face."""
-        if not outer_id:
-            outer_id='default'
-
         faces = []
         try:
             detail = self.api.faceset.getdetail(outer_id = outer_id)
@@ -83,28 +80,24 @@ class FaceTask(object):
         tmp_executor = ThreadPoolExecutor()
         return list(tmp_executor.map(get_faces_name, faces_tokens))
 
-    def upload_faces(self, outer_id=None, **kwargs):
+    def upload_faces(self, outer_id='default', **kwargs):
         """上传face到指定的faceset
             keyword args  image_file or  image_url
         """
-        if not outer_id:
-            outer_id = 'default'
         name = kwargs.pop('name', None)
         if name == None:
             name = input('Please enter the picture name:')
         try:
             face_token = self.api.detect(**kwargs)["faces"][0]["face_token"]
-        except KeyError as e:
+        except KeyError: 
             return None
         self.api.faceset.addface(outer_id=outer_id, face_tokens=face_token)
         self.api.face.setuserid(face_token='1f394f938b722e97d406a517faa5ae95', user_id=name)
         return face_token, name
 
-    def search_faces(self,  face_token, outer_id=None):
+    def search_faces(self,  face_token, outer_id='default'):
         """ 根据face_token在指定的faceset中进行匹配搜索
         """
-        if not outer_id:
-            outer_id = 'default'
         try:
             results = self.api.search(face_token=face_token, outer_id=outer_id)['results']
         except ValueError:
@@ -112,9 +105,7 @@ class FaceTask(object):
 
         return [face['user_id'] for face in results if face['confidence'] > CONFIDENCE]
 
-    def search_people_from_camera(self, outer_id=None):
-        if not outer_id:
-            outer_id = 'default'
+    def search_people_from_camera(self, outer_id='default'):
         if not RASPBERRYPI:
             return None
         image_name = '%s.jpg'%time.time()
@@ -128,10 +119,7 @@ class FaceTask(object):
 
         return self.search_faces(outer_id, face_token)
 
-    def update_faces_from_camera(self, outer_id=None):
-        if not outer_id:
-            outer_id = 'default'
-
+    def update_faces_from_camera(self, outer_id='default'):
         if not RASPBERRYPI:
             return None
         image_name = '%s.jpg'%time.time()
