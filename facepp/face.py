@@ -138,6 +138,7 @@ def create_raw_faceset(face_service, faceset_name, image_path, image_count):
 
 def draw_face_location():
 	face_service = FaceService(api_key='wCadfoQIEbZ1RvksVWvlTkd21a5bZWAH', api_secret='wff5ht9ky77pWK52a_NtwY3Csz47CSqT')
+<<<<<<< HEAD
 	
 	image_count = 4
 	for image_index in range(1, image_count+1):
