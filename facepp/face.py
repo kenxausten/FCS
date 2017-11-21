@@ -139,7 +139,7 @@ def create_raw_faceset(face_service, faceset_name, image_path, image_count):
 def draw_face_location():
 	face_service = FaceService(api_key='wCadfoQIEbZ1RvksVWvlTkd21a5bZWAH', api_secret='wff5ht9ky77pWK52a_NtwY3Csz47CSqT')
 	
-	image_count = 3
+	image_count = 4
 	for image_index in range(1, image_count+1):
 		file_path = '../image/%d.jpg' % image_index
 		ret_file_path = '../image/face_%d.jpg' % image_index
@@ -164,20 +164,22 @@ def draw_face_location():
 		cv2.imwrite(ret_file_path, img)
 
 if __name__ == '__main__':	
-	faceset_name = 'xx'
+# 	faceset_name = 'xx'
+# 	
+# 	raw_image_path = '../image/raw_image/'
+# 	raw_image_count = 4
+# 	
+# 	file_path = '../image/11.jpg'
+# 	face_service = FaceService(api_key='wCadfoQIEbZ1RvksVWvlTkd21a5bZWAH', api_secret='wff5ht9ky77pWK52a_NtwY3Csz47CSqT')
+#  	#token_file_name = create_raw_faceset(face_service, faceset_name, raw_image_path, raw_image_count)
+# 	
+# 	result = face_service.set_get()
+# 	print result
+# 	
+# 	result = face_service.set_delete('yy', check_empty=0)
+# 	print result
 	
-	raw_image_path = '../image/raw_image/'
-	raw_image_count = 4
-	
-	file_path = '../image/11.jpg'
-	face_service = FaceService(api_key='wCadfoQIEbZ1RvksVWvlTkd21a5bZWAH', api_secret='wff5ht9ky77pWK52a_NtwY3Csz47CSqT')
- 	#token_file_name = create_raw_faceset(face_service, faceset_name, raw_image_path, raw_image_count)
-	
-	result = face_service.set_get()
-	print result
-	
-	result = face_service.set_delete('yy', check_empty=0)
-	print result
+	draw_face_location()
 	
 # 	result = face_service.search(faceset_name, file_path, return_result_count=3)
 # 	print result["results"]

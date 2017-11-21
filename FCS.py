@@ -8,7 +8,7 @@ Created on 2017/11/16
 
 from facepp.face import *
 
-class FCS():
+class FCS(object):
     def __init__(self, faceset_name):
         self.face_service = FaceService(api_key='wCadfoQIEbZ1RvksVWvlTkd21a5bZWAH', api_secret='wff5ht9ky77pWK52a_NtwY3Csz47CSqT')
         self.faceset_name = faceset_name

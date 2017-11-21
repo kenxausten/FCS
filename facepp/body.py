@@ -40,7 +40,7 @@ if __name__ == '__main__':
 	
 	body_service = BodyService(api_key='wCadfoQIEbZ1RvksVWvlTkd21a5bZWAH', api_secret='wff5ht9ky77pWK52a_NtwY3Csz47CSqT')
 	
-	image_count = 3
+	image_count = 4
 	for image_index in range(1, image_count+1):
 		file_path = '../image/%d.jpg' % image_index
 		ret_file_path = '../image/body_%d.jpg' % image_index
