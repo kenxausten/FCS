@@ -157,6 +157,7 @@ class _APIProxy(object):
                 ret = urllib2.urlopen(request, timeout=self._api.timeout).read()
                 break
             except urllib2.HTTPError as e:
+                print str(e)
                 raise APIError(e.code, url, e.read())
             except (socket.error, urllib2.URLError) as e:
                 if retry < 0:
@@ -276,3 +277,16 @@ _APIS = [
 ]
 
 _APIS = [i.split('/')[1:] for i in _APIS]
+
+if __name__ == '__main__':
+    API_KEY = 'wCadfoQIEbZ1RvksVWvlTkd21a5bZWAH'
+    API_SECRET = 'wff5ht9ky77pWK52a_NtwY3Csz47CSqT'
+    api = API(API_KEY, API_SECRET)
+    #print api.faceset.getfacesets()
+    def get_faces_name(face_token):
+            face_detail = api.face.getdetail(face_token = face_token)
+            print face_detail
+            return face_detail.get('user_id', None)
+    faces = api.faceset.getdetail(outer_id='default')['face_tokens']
+    print faces
+    print list(map(get_faces_name, faces))

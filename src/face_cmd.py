@@ -7,6 +7,7 @@ Created on 2017年11月18日
 
 from cmd import Cmd
 from task import FaceTask
+from __builtin__ import str
 
 
 def parse(line):
@@ -14,13 +15,31 @@ def parse(line):
 
 exec_task = FaceTask()
 
+class BaseShell(Cmd):
+    def do_exit(self, args):
+        '''exit this program'''
+        sys.exit()
+    
+    def do_quit(self, args):
+        '''quit this program'''
+        return True
+    
+    def do_shell(self, args):
+        '''run a shell cmd'''
+        import subprocess
+        subshell = subprocess.Popen(args, shell=True, stdin=None, stdout=None)
+        subshell.communicate()
+        subshell.terminate()
 
-class FaceShell(Cmd):
+class FaceShell(BaseShell):
     intro = 'Welcome to the face shell.   Type help or ? to list commands.\n'
-    prompt = '(face) '
+    prompt = 'face> '
 
     def do_show(self, original_arg):
-        """ show facesets, show faces outer_id """
+        '''
+            1. show facesets ---show all facesets
+            2. show faceset <faceset_name> ---show image name in one faceset
+        '''
         usage = False
         arg = parse(original_arg)
         if len(arg) == 1:
@@ -29,8 +48,8 @@ class FaceShell(Cmd):
             else:
                 usage = True
         elif len(arg) == 2:
-            if arg[0] == 'faces':
-                print(exec_task.get_faces(arg[1]))
+            if arg[0] == 'faceset':
+                print(exec_task.get_faceset(arg[1]))
             else:
                 usage = True
 

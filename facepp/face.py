@@ -141,6 +141,7 @@ def draw_face_location():
 <<<<<<< HEAD
 	
 	image_count = 4
+	image_count = 3
 	for image_index in range(1, image_count+1):
 		file_path = '../image/%d.jpg' % image_index
 		ret_file_path = '../image/face_%d.jpg' % image_index

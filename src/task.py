@@ -73,13 +73,15 @@ class FaceTask(object):
 
         return [faceset['outer_id'] for faceset in facesets]
 
-    def get_faces(self, outer_id='default'):
+    def get_faceset(self, outer_id='default'):
         """获取指定faceset中的face."""
         faces = []
         try:
             detail = self.api.faceset.getdetail(outer_id = outer_id)
             faces_tokens = detail['face_tokens']
         except ValueError:
+            return None
+        except APIError:
             return None
 
         def get_faces_name(face_token):
