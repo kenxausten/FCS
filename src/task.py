@@ -104,6 +104,10 @@ class FaceTask(object):
             return None
         self.api.faceset.addface(outer_id=outer_id, face_tokens=face_token)
         self.api.face.setuserid(face_token=face_token, user_id=name)
+        
+        img = db.models.Image(name=name, path=kwargs.pop('image_path'), token=face_token)
+        img.save()
+        
         return face_token, name
 
     def search_faces(self,  face_token, outer_id='default'):
@@ -119,13 +123,14 @@ class FaceTask(object):
     def search_people_from_camera(self, outer_id='default'):
         if not RASPBERRYPI:
             return None
-        image_name = '%s.jpg'%time.time()
+        image_name = '%s.jpg' % time.time()
         GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, 1)
         cmd = 'sudo raspistill -t 2000 -o %s -p 100,100,300,200 -q 5' % image_name
         GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, 0)
         with self.camera_lock:
             os.system(cmd)
         ret = self.api.detect(image_file=File(image_name))
+        
         try:
             face_token=ret["faces"][0]["face_token"]
         except (IndexError, KeyError):
@@ -144,7 +149,7 @@ class FaceTask(object):
         with self.camera_lock:
             os.system(cmd)
         GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, False)
-        return self.upload_faces(outer_id, image_file=File(image_name))
+        return self.upload_faces(outer_id, image_file=File(image_name), image_path=image_name)
 
     def clear(self):
         if RASPBERRYPI:

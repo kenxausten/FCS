@@ -10,10 +10,15 @@ A. On Windows platform.
 ### 安装依赖
 ```
     pip install -r requirements.txt
+	sudo install -y mysql-server
+	
+	pip install peewee
+	
+	CREATE DATABASE `facedb` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci
 ```
 
 ### feature
-* 树莓派平台
+* 树莓派平aptitude台
 * 命令行交互
 * GPIO触发身份比较
 * 拍照指示。

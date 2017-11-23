@@ -12,6 +12,8 @@ import json
 import os
 import requests
 import cv2
+from PIL import Image
+import matplotlib.pyplot as plt
 
 class FaceService(object):
 	def __init__(self, api_key, api_secret):
@@ -145,6 +147,9 @@ def draw_face_location():
 		ret_file_path = '../image/face_%d.jpg' % image_index
 		
 		result = face_service.detect(file_path)
+		if 'error_message' in result:
+			print "failed to run FACE++ API"
+			continue
 		print "image:%s, face count: %d" % (file_path, len(result["faces"]))
 		
 		img = cv2.imread(file_path)
@@ -162,6 +167,15 @@ def draw_face_location():
 			cv2.putText(img, z, (x, y - 20), cv2.FONT_HERSHEY_SIMPLEX, 1, 100)
 			
 		cv2.imwrite(ret_file_path, img)
+		
+	for image_index in range(1, image_count+1):
+		ret_file_path = '../image/face_%d.jpg' % image_index
+		
+		imgfile = cv2.imread(ret_file_path)
+		plt.subplot(int("22%d" % image_index))
+		plt.imshow(imgfile)
+		
+	plt.show()
 
 if __name__ == '__main__':	
 # 	faceset_name = 'xx'
