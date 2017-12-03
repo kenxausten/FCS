@@ -10,11 +10,9 @@ A. On Windows platform.
 ### 安装依赖
 ```
     pip install -r requirements.txt
-	sudo install -y mysql-server
-	
-	pip install peewee
-	
-	CREATE DATABASE `facedb` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci
+    sudo install -y mysql-server
+    pip install peewee
+    CREATE DATABASE `facedb` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci
 ```
 
 ### feature
@@ -23,6 +21,11 @@ A. On Windows platform.
 * GPIO触发身份比较
 * 拍照指示。
 * PC平台, 只支持cmd部分命令。
+* 使用django的orm。
+
+### ORM 使用
+* 新建model(数据表): 进入db目录执行  python models.py syncdb
+* 使用model方式与django相同。
 
 ### facecmd
 ``` python

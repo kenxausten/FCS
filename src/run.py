@@ -3,10 +3,16 @@
 import threading
 from face_cmd import FaceShell
 from face_gpio import GPIO_spin, Signal
+import os
 import sys
+HOME = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+sys.path.extend([HOME,])
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", 'conf.settings')
+
 
 
 if __name__ == '__main__':
+
     GPIO_STAET = False
     if len(sys.argv) == 3:
         if sys.argv[1]=='satrt' and sys.argv[2]=='gpio':
