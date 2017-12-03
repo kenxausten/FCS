@@ -7,6 +7,7 @@ Created on 2017年11月18日
 
 from cmd import Cmd
 from task import FaceTask
+import sys
 from __builtin__ import str
 
 
@@ -30,6 +31,7 @@ class BaseShell(Cmd):
         subshell = subprocess.Popen(args, shell=True, stdin=None, stdout=None)
         subshell.communicate()
         subshell.terminate()
+
 
 class FaceShell(BaseShell):
     intro = 'Welcome to the face shell.   Type help or ? to list commands.\n'

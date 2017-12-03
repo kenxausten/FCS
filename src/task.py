@@ -14,6 +14,7 @@ import os
 import time
 import platform
 import threading
+from db.models import Image
 
 RASPBERRYPI = 'arm' in platform.platform().lower()
 if RASPBERRYPI:
@@ -35,7 +36,9 @@ BCM_PIN4_SHOW_TAKE_PHOTO = 4
 API_KEY = 'wCadfoQIEbZ1RvksVWvlTkd21a5bZWAH'
 API_SECRET = 'wff5ht9ky77pWK52a_NtwY3Csz47CSqT'
 
+camera_lock = threading.Lock()
 executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
+
 
 class FaceTask(object):
 
@@ -45,12 +48,9 @@ class FaceTask(object):
             GPIO.setmode(GPIO.BCM)
             GPIO.setup(BCM_PIN4_SHOW_TAKE_PHOTO, GPIO.OUT)
             GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, True)
-        try:
-            self.api.faceset.create(outer_id = 'default')
-        except APIError as e:
-            """如果 'default' 已创建， 忽略改错误。"""
-            pass
-        self.camera_lock = threading.Lock()
+        facesets = self.get_facesets()
+        if 'default' not in facesets:
+            self.api.faceset.create(outer_id='default')
 
     def delete_faceset(self, outer_id):
         try:
@@ -85,7 +85,7 @@ class FaceTask(object):
             return None
 
         def get_faces_name(face_token):
-            face_detail = self.api.face.getdetail(face_token = face_token)
+            face_detail = self.api.face.getdetail(face_token=face_token)
             return face_detail.get('user_id', None)
 
         tmp_executor = ThreadPoolExecutor()
@@ -105,9 +105,9 @@ class FaceTask(object):
         self.api.faceset.addface(outer_id=outer_id, face_tokens=face_token)
         self.api.face.setuserid(face_token=face_token, user_id=name)
         
-        img = db.models.Image(name=name, path=kwargs.pop('image_path'), token=face_token)
+        img = Image(name=name, path=kwargs.pop('image_path'), token=face_token)
         img.save()
-        
+
         return face_token, name
 
     def search_faces(self,  face_token, outer_id='default'):
@@ -127,10 +127,10 @@ class FaceTask(object):
         GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, 1)
         cmd = 'sudo raspistill -t 2000 -o %s -p 100,100,300,200 -q 5' % image_name
         GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, 0)
-        with self.camera_lock:
+        with camera_lock:
             os.system(cmd)
         ret = self.api.detect(image_file=File(image_name))
-        
+
         try:
             face_token=ret["faces"][0]["face_token"]
         except (IndexError, KeyError):
@@ -146,7 +146,7 @@ class FaceTask(object):
         image_name = '%s.jpg'%time.time()
         cmd = 'sudo raspistill -t 2000 -o %s -p 100,100,300,200 -q 5' % image_name
         GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, True)
-        with self.camera_lock:
+        with camera_lock:
             os.system(cmd)
         GPIO.output(BCM_PIN4_SHOW_TAKE_PHOTO, False)
         return self.upload_faces(outer_id, image_file=File(image_name), image_path=image_name)
