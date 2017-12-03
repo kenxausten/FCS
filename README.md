@@ -26,6 +26,7 @@ A. On Windows platform.
 ### ORM 使用
 * 新建model(数据表): 进入db目录执行  python models.py syncdb
 * 使用model方式与django相同。
+* 数据配置修改conf/settings.py, 修改方式同django
 
 ### facecmd
 ``` python
